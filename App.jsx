@@ -3,6 +3,8 @@ import { StyleSheet, Text, View, Pressable, Image } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import { Audio } from 'expo-av';
 
+
+
 import Dice from './components/Dice';
 import Button from './components/Button';
 
@@ -49,7 +51,7 @@ export default function App() {
 
   async function playSound() {
     console.log('Loading Sound');
-    const { sound } = await Audio.Sound.createAsync( require('./assets/dice.ogg')
+    const { sound } = await Audio.Sound.createAsync( require('./assets/dice.mp3')
     );
     setSound(sound);
 
