@@ -24,7 +24,7 @@ const Dice = ({ onSelect, selected, number }) => {
       <TouchableOpacity onPress={toggleSelect}>
         <View>
           <Image
-            style={{ width: diceSize, height: diceSize, opacity: selected ? 0.5 : 1 }}
+            style={{ width: diceSize, height: diceSize, opacity: selected ? 0.5 : 1, borderWidth: selected ? 4 : 0, borderColor: '#39FF14' }}
             source={diceImage}
           />
         </View>

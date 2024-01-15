@@ -1,40 +1,30 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Pressable, Image } from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
+import { Audio } from 'expo-av';
 
-import Dice from './components/dice';
-import Button from './components/button';
+import Dice from './components/Dice';
+import Button from './components/Button';
 
-const diceImages = {
-  1: require('./assets/1dice.png'),
-  2: require('./assets/2dice.png'),
-  3: require('./assets/3dice.png'),
-  4: require('./assets/4dice.png'),
-  5: require('./assets/5dice.png'),
-  6: require('./assets/6dice.png'),
-};
-
-const scores = new Map([
-  [1, 1],
-  [2, 2],
-  [3, 0],
-  [4, 4],
-  [5, 5],
-  [6, 6],
-]);
+const scores = [1, 2, 0, 4, 5, 6];
 
 export default function App() {
   const [dice, setDice] = useState([0, 0, 0, 0, 0, 0]);
   const [selectedDice, setSelectedDice] = useState([false, false, false, false, false, false]);
-  const [player1Dice, setPlayer1Dice] = useState([0]);
-  const [player2Dice, setPlayer2Dice] = useState([0]);
+  const [player1Score, setPlayer1Score] = useState(0);
+  const [player2Score, setPlayer2Score] = useState(0);
+  const [sound, setSound] = useState();
+
   console.log('dice', dice);
+  console.log('selectedDice', selectedDice);
 
   const rollDice = () => {
-    console.log('Rolling dice...');
+    // console.log('Rolling dice...');
+    playSound();
     if (!selectedDice.every((isSelected) => isSelected)) {
       setDice(prevDice => {
         const newDice = prevDice.map((value, index) => (selectedDice[index] ? value : Math.floor(Math.random() * 6) + 1));
+        console.log('newDice', newDice);
         return newDice;
       });
     }
@@ -48,10 +38,33 @@ export default function App() {
     }
   };
 
-  // Modify onSelect to handle selection without generating a random number
   const onSelect = (index) => {
     toggleSelect(index);
   };
+
+  const getScore = (dice) => {
+    const score = scores[dice - 1];
+    return score;
+  }
+
+  async function playSound() {
+    console.log('Loading Sound');
+    const { sound } = await Audio.Sound.createAsync( require('./assets/dice.ogg')
+    );
+    setSound(sound);
+
+    console.log('Playing Sound');
+    await sound.playAsync();
+  }
+
+  useEffect(() => {
+    return sound
+      ? () => {
+          console.log('Unloading Sound');
+          sound.unloadAsync();
+        }
+      : undefined;
+  }, [sound]);
 
 
   return (
@@ -66,9 +79,14 @@ export default function App() {
           <Dice key={index + 3} selected={selectedDice[index + 3]} onSelect={() => onSelect(index + 3)} number={dice[index + 3]} />
         ))}
       </View>
-      <Pressable style={styles.rollButton} onPress={rollDice}>
+      <Pressable style={styles.rollButton} onPress={rollDice} >
         <Text style={{ color: 'white', fontSize: 30 }}>Roll Dice</Text>
       </Pressable>
+      <View>
+        <Text style={{ color: 'white', fontSize: 30 }}>
+          Score: {player1Score}
+        </Text>
+      </View>
     </View>
   );
 }
