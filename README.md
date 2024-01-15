@@ -1,6 +1,6 @@
 Threes Dice Game
 Currently just an expo-go project
-
+++NOT CURRENTLY WORKING++
 To run:
 -download and extract
 -in the command line, do 'npm install'
